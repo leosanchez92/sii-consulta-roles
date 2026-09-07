@@ -1,0 +1,23 @@
+# Entorno / caché
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Resultados generados
+SALIDAS/
+salida*.csv
+salida*.xlsx
+salida*.geojson
+salida*.html
+
+# Datos de entrada reales (CONFIDENCIALES) — no versionar
+entrada*.csv
+datos*.csv
+*_real.csv
+*.xlsx
+!plantilla_entrada.csv
+
+# Sistema
+.DS_Store
+Thumbs.db

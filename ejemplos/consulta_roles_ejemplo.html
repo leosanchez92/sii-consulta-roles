@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consulta de roles SII</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root{--fg:#1c2733;--muted:#5b6b7a;--line:#e2e8f0;--bg:#f4f6f8;--card:#fff;--ok:#0f7b57;--no:#b45309;--accent:#2563eb}
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--fg);background:var(--bg)}
+  header{padding:14px 18px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1000}
+  header h1{margin:0;font-size:17px}
+  header p{margin:3px 0 0;color:var(--muted);font-size:12px}
+  .stats{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+  .chip{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--bg);border:1px solid var(--line)}
+  .chip.ok{color:var(--ok)}.chip.no{color:var(--no)}
+  #map{height:50vh;min-height:300px;width:100%;background:#dbe4ec}
+  .wrap{padding:14px 18px 40px;max-width:1100px;margin:0 auto}
+  .toolbar{display:flex;gap:10px;align-items:center;margin:4px 0 14px;flex-wrap:wrap}
+  input[type=search]{padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;min-width:240px;flex:1}
+  button.lnk{background:none;border:1px solid var(--line);border-radius:8px;padding:7px 11px;font-size:12px;cursor:pointer;color:var(--fg)}
+  button.lnk:hover{background:#eef2f6}
+  #cont{color:var(--muted);font-size:12px}
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+  summary{padding:11px 14px;cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  summary::-webkit-details-marker{display:none}
+  summary:hover{background:#fafbfc}
+  summary .caret{color:var(--muted);font-size:12px;transition:transform .15s}
+  details[open] summary .caret{transform:rotate(90deg)}
+  summary .cnt{font-weight:500;color:var(--muted);font-size:12px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:8px 12px;text-align:left;border-top:1px solid var(--line);font-size:13px;vertical-align:top}
+  th{background:#fbfcfd;font-weight:600;color:var(--muted);white-space:nowrap}
+  tr.clic:hover{background:#f0f9ff;cursor:pointer}
+  .badge{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px}
+  .badge.OK{background:#dcfce7;color:var(--ok)}
+  .badge.NO_ENCONTRADO,.badge.ERROR,.badge.DATO_INVALIDO{background:#fef3c7;color:var(--no)}
+  .coord{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+  a.gm{color:var(--accent);text-decoration:none;white-space:nowrap}
+  a.gm:hover{text-decoration:underline}
+  .rol{color:var(--muted);font-variant-numeric:tabular-nums}
+  footer{color:var(--muted);font-size:12px;text-align:center;padding-bottom:24px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Consulta de roles &mdash; SII</h1>
+  <p>Informaci&oacute;n p&uacute;blica referencial del SII. Generado el (ejemplo).</p>
+  <div class="stats">
+    <span class="chip">4 predios</span>
+    <span class="chip ok">3 con coordenada</span>
+    <span class="chip no">1 sin coordenada</span>
+    <span class="chip">3 comunas</span>
+  </div>
+</header>
+<div id="map"></div>
+<div class="wrap">
+  <div class="toolbar">
+    <input id="q" type="search" placeholder="Filtrar por comuna, direcci&oacute;n o rol...">
+    <button class="lnk" id="exp">Expandir todo</button>
+    <button class="lnk" id="col">Colapsar todo</button>
+    <span id="cont"></span>
+  </div>
+  <div id="grupos"></div>
+</div>
+<footer>Clic en una fila para centrar el mapa; &ldquo;Google Maps&rdquo; abre el punto en una pesta&ntilde;a nueva.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const DATOS = [{"id": 0, "comuna": "RANCAGUA", "manzana": "1", "predio": "1", "direccion": "FREIRE 41", "estado": "OK", "detalle": "", "lat": -34.167097, "lon": -70.73477}, {"id": 1, "comuna": "RANCAGUA", "manzana": "1", "predio": "2", "direccion": "FREIRE 55", "estado": "OK", "detalle": "", "lat": -34.167184, "lon": -70.734787}, {"id": 2, "comuna": "SAN FERNANDO", "manzana": "50", "predio": "3", "direccion": "B OHIGGINS 442", "estado": "OK", "detalle": "", "lat": -34.58, "lon": -70.98}, {"id": 3, "comuna": "SANTA CRUZ", "manzana": "9999", "predio": "9999", "direccion": "", "estado": "NO_ENCONTRADO", "detalle": "El SII no tiene datos para ese predio.", "lat": null, "lon": null}];
+const fmt = n => (typeof n === "number") ? n.toFixed(6) : "";
+const conCoord = d => d.lat !== null && d.lon !== null;
+const gmapUrl = d => "https://www.google.com/maps?q=" + d.lat + "," + d.lon;
+const esc = s => (s||"").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+
+let map, layer, markers = {};
+function initMap(){
+  if (typeof L === "undefined"){
+    document.getElementById("map").innerHTML =
+      '<div style="padding:20px;color:#5b6b7a">No se pudo cargar el mapa (revisa la conexi&oacute;n). La tabla funciona igual.</div>';
+    return;
+  }
+  map = L.map("map", {scrollWheelZoom:true});
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {maxZoom:19, attribution:"&copy; OpenStreetMap"}).addTo(map);
+  layer = L.layerGroup().addTo(map);
+  const bounds = [];
+  DATOS.filter(conCoord).forEach(d => {
+    const m = L.marker([d.lat, d.lon]).addTo(layer);
+    m.bindPopup(
+      "<b>"+esc(d.comuna)+"</b> &middot; rol "+esc(d.manzana)+"-"+esc(d.predio)+"<br>"+
+      esc(d.direccion)+"<br><span style='color:#5b6b7a'>"+fmt(d.lat)+", "+fmt(d.lon)+"</span>"+
+      "<br><a href='"+gmapUrl(d)+"' target='_blank' rel='noopener'>Abrir en Google Maps</a>");
+    markers[d.id] = m; bounds.push([d.lat, d.lon]);
+  });
+  if (bounds.length) map.fitBounds(bounds, {padding:[30,30], maxZoom:16});
+  else map.setView([-34.4,-71.0], 9);
+}
+function irAPunto(id){
+  const m = markers[id];
+  if (m && map){ map.flyTo(m.getLatLng(), 18, {duration:.6}); m.openPopup();
+    window.scrollTo({top:0, behavior:"smooth"}); }
+}
+function grupos(filtro){
+  const q = (filtro||"").toLowerCase();
+  const cont = document.getElementById("grupos");
+  cont.innerHTML = "";
+  const porComuna = {};
+  let vis = 0;
+  DATOS.forEach(d => {
+    const txt = (d.comuna+" "+d.direccion+" "+d.manzana+"-"+d.predio).toLowerCase();
+    if (q && !txt.includes(q)) return;
+    (porComuna[d.comuna] = porComuna[d.comuna] || []).push(d); vis++;
+  });
+  Object.keys(porComuna).sort().forEach(com => {
+    const filas = porComuna[com];
+    const det = document.createElement("details");
+    det.open = !!q;
+    let cuerpo = "";
+    filas.forEach(d => {
+      const cc = conCoord(d);
+      const gm = cc ? "<a class='gm' href='"+gmapUrl(d)+"' target='_blank' rel='noopener'>Google Maps</a>" : "";
+      cuerpo += "<tr class='"+(cc?"clic":"")+"' data-id='"+d.id+"'>"+
+        "<td><span class='badge "+d.estado+"'>"+d.estado.replace(/_/g," ")+"</span></td>"+
+        "<td class='rol'>"+esc(d.manzana)+"-"+esc(d.predio)+"</td>"+
+        "<td>"+esc(d.direccion)+(d.detalle && d.estado!=="OK" ? "<div style='color:#b45309;font-size:11px'>"+esc(d.detalle)+"</div>" : "")+"</td>"+
+        "<td class='coord'>"+(cc? fmt(d.lat)+", "+fmt(d.lon):"")+"</td>"+
+        "<td>"+gm+"</td></tr>";
+    });
+    det.innerHTML =
+      "<summary><span><span class='caret'>&#9654;</span> "+esc(com)+"</span>"+
+      "<span class='cnt'>"+filas.length+" predio(s)</span></summary>"+
+      "<table><thead><tr><th>Estado</th><th>Rol</th><th>Direcci&oacute;n</th>"+
+      "<th>Coordenada (lat, lon)</th><th>Mapa</th></tr></thead><tbody>"+cuerpo+"</tbody></table>";
+    cont.appendChild(det);
+  });
+  cont.querySelectorAll("tr.clic").forEach(tr =>
+    tr.addEventListener("click", () => irAPunto(+tr.dataset.id)));
+  document.getElementById("cont").textContent = vis + " de " + DATOS.length + " predio(s)";
+}
+document.getElementById("q").addEventListener("input", e => grupos(e.target.value));
+document.getElementById("exp").addEventListener("click", () =>
+  document.querySelectorAll("#grupos details").forEach(d => d.open = true));
+document.getElementById("col").addEventListener("click", () =>
+  document.querySelectorAll("#grupos details").forEach(d => d.open = false));
+initMap(); grupos("");
+</script>
+</body>
+</html>
