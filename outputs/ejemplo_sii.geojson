@@ -1,0 +1,87 @@
+{
+ "type": "FeatureCollection",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+  }
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.73477,
+     -34.167097
+    ]
+   },
+   "properties": {
+    "consulta_comuna": "RANCAGUA",
+    "consulta_manzana": "1",
+    "consulta_predio": "1",
+    "estado": "OK",
+    "detalle": "",
+    "comuna": "RANCAGUA",
+    "direccion": "FREIRE 41"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.734787,
+     -34.167184
+    ]
+   },
+   "properties": {
+    "consulta_comuna": "RANCAGUA",
+    "consulta_manzana": "1",
+    "consulta_predio": "2",
+    "estado": "OK",
+    "detalle": "",
+    "comuna": "RANCAGUA",
+    "direccion": "FREIRE 55"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.985729,
+     -34.590064
+    ]
+   },
+   "properties": {
+    "consulta_comuna": "SAN FERNANDO",
+    "consulta_manzana": "50",
+    "consulta_predio": "3",
+    "estado": "OK",
+    "detalle": "",
+    "comuna": "SAN FERNANDO",
+    "direccion": "B OHIGGINS 442"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -71.368773,
+     -34.637941
+    ]
+   },
+   "properties": {
+    "consulta_comuna": "SANTA CRUZ",
+    "consulta_manzana": "12",
+    "consulta_predio": "5",
+    "estado": "OK",
+    "detalle": "",
+    "comuna": "SANTA CRUZ",
+    "direccion": "AVIAD ACEVEDO"
+   }
+  }
+ ]
+}

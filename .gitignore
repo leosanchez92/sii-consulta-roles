@@ -4,10 +4,10 @@ venv/
 __pycache__/
 *.pyc
 
-# Resultados generados
+# Resultados generados (corridas reales) — no versionar
 SALIDAS/
+outputs/*
 salida*.csv
-salida*.xlsx
 salida*.geojson
 salida*.html
 
@@ -16,7 +16,10 @@ entrada*.csv
 datos*.csv
 *_real.csv
 *.xlsx
+
+# Excepciones que SÍ se versionan (plantilla y salidas de ejemplo)
 !plantilla_entrada.csv
+!outputs/ejemplo_*
 
 # Sistema
 .DS_Store

@@ -6,7 +6,7 @@ sii_roles.py - Consulta masiva de roles de avaluo en el mapa del SII (Cartografi
 Entrada: comuna (nombre o codigo SII) + manzana + predio.
 Salida : comuna, direccion y coordenada del predio (lat/lon WGS84).
          Genera CSV, Excel (.xlsx, a prueba de Excel), GeoJSON de puntos y un HTML
-         con mapa + tabla abatible. Todo se guarda en la carpeta SALIDAS.
+         con mapa + tabla abatible. Todo se guarda en la carpeta outputs.
 
 Fuente: POST https://www4.sii.cl/mapasui/services/data/mapasFacadeService/getPredioNacional
         (consulta anonima, informacion publica referencial del SII).
@@ -15,7 +15,7 @@ Uso rapido:
     # Una consulta
     python sii_roles.py --comuna RANCAGUA --manzana 1 --predio 1
 
-    # Lote desde CSV (columnas: COMUNA, MANZANA, PREDIO) -> SALIDAS\\...
+    # Lote desde CSV (columnas: COMUNA, MANZANA, PREDIO) -> outputs\\...
     python sii_roles.py entrada.csv
 
     # Listar / buscar codigos de comuna
@@ -62,7 +62,7 @@ HEADERS = {
                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"),
 }
 
-DIR_SALIDAS = "SALIDAS"  # carpeta por defecto para todas las salidas
+DIR_SALIDAS = "outputs"  # carpeta por defecto para todas las salidas
 
 # Campos que se exportan (clave_api -> encabezado). Solo lo pedido: comuna, direccion, coordenada.
 CAMPOS = [
@@ -488,7 +488,7 @@ def main(argv=None):
     p.add_argument("-o", "--nombre", default="salida_sii",
                    help="Nombre base de las salidas (sin extension). Por defecto 'salida_sii'.")
     p.add_argument("--outdir", default=DIR_SALIDAS,
-                   help="Carpeta donde guardar las salidas (por defecto SALIDAS).")
+                   help="Carpeta donde guardar las salidas (por defecto outputs).")
     p.add_argument("--no-csv", action="store_true", help="No generar el CSV.")
     p.add_argument("--no-xlsx", action="store_true", help="No generar el Excel (.xlsx).")
     p.add_argument("--no-geojson", action="store_true", help="No generar el GeoJSON.")
@@ -570,7 +570,7 @@ def main(argv=None):
         if i < len(trabajo) and args.delay > 0:
             time.sleep(args.delay)
 
-    # --- escribir salidas en la carpeta SALIDAS ----------------------------
+    # --- escribir salidas en la carpeta outputs ----------------------------
     os.makedirs(args.outdir, exist_ok=True)
     base = os.path.join(args.outdir, os.path.splitext(os.path.basename(args.nombre))[0])
     fecha = time.strftime("%d-%m-%Y %H:%M")

@@ -46,11 +46,11 @@
 <body>
 <header>
   <h1>Consulta de roles &mdash; SII</h1>
-  <p>Informaci&oacute;n p&uacute;blica referencial del SII. Generado el (ejemplo).</p>
+  <p>Informaci&oacute;n p&uacute;blica referencial del SII. Generado el 07-09-2026 15:09.</p>
   <div class="stats">
     <span class="chip">4 predios</span>
-    <span class="chip ok">3 con coordenada</span>
-    <span class="chip no">1 sin coordenada</span>
+    <span class="chip ok">4 con coordenada</span>
+    <span class="chip no">0 sin coordenada</span>
     <span class="chip">3 comunas</span>
   </div>
 </header>
@@ -68,7 +68,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-const DATOS = [{"id": 0, "comuna": "RANCAGUA", "manzana": "1", "predio": "1", "direccion": "FREIRE 41", "estado": "OK", "detalle": "", "lat": -34.167097, "lon": -70.73477}, {"id": 1, "comuna": "RANCAGUA", "manzana": "1", "predio": "2", "direccion": "FREIRE 55", "estado": "OK", "detalle": "", "lat": -34.167184, "lon": -70.734787}, {"id": 2, "comuna": "SAN FERNANDO", "manzana": "50", "predio": "3", "direccion": "B OHIGGINS 442", "estado": "OK", "detalle": "", "lat": -34.58, "lon": -70.98}, {"id": 3, "comuna": "SANTA CRUZ", "manzana": "9999", "predio": "9999", "direccion": "", "estado": "NO_ENCONTRADO", "detalle": "El SII no tiene datos para ese predio.", "lat": null, "lon": null}];
+const DATOS = [{"id": 0, "comuna": "RANCAGUA", "manzana": "1", "predio": "1", "direccion": "FREIRE 41", "estado": "OK", "detalle": "", "lat": -34.167097, "lon": -70.73477}, {"id": 1, "comuna": "RANCAGUA", "manzana": "1", "predio": "2", "direccion": "FREIRE 55", "estado": "OK", "detalle": "", "lat": -34.167184, "lon": -70.734787}, {"id": 2, "comuna": "SAN FERNANDO", "manzana": "50", "predio": "3", "direccion": "B OHIGGINS 442", "estado": "OK", "detalle": "", "lat": -34.590064, "lon": -70.985729}, {"id": 3, "comuna": "SANTA CRUZ", "manzana": "12", "predio": "5", "direccion": "AVIAD ACEVEDO", "estado": "OK", "detalle": "", "lat": -34.637941, "lon": -71.368773}];
 const fmt = n => (typeof n === "number") ? n.toFixed(6) : "";
 const conCoord = d => d.lat !== null && d.lon !== null;
 const gmapUrl = d => "https://www.google.com/maps?q=" + d.lat + "," + d.lon;

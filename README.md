@@ -21,7 +21,7 @@ por predio en el visor web— por un proceso por lotes reproducible.
 - **Entrada por lotes** desde un CSV (`COMUNA`, `MANZANA`, `PREDIO`) o consulta individual por argumentos.
 - **Catálogo de las 347 comunas** embebido: acepta el nombre de la comuna o su código SII.
 - **Georreferenciación**: entrega latitud/longitud (WGS84) de cada predio.
-- **Cuatro salidas** desde una sola corrida, todas a una carpeta `SALIDAS/`:
+- **Cuatro salidas** desde una sola corrida, todas a una carpeta `outputs/`:
   - `CSV` — para pipelines y SIG.
   - `Excel (.xlsx)` — con las coordenadas como números reales (a prueba de la conversión regional de Excel).
   - `GeoJSON` — puntos listos para QGIS / ArcGIS.
@@ -58,7 +58,12 @@ Prepara un CSV con las columnas **COMUNA**, **MANZANA**, **PREDIO** (ver
 python sii_roles.py entrada.csv
 ```
 
-Los resultados quedan en la carpeta `SALIDAS/` (`salida_sii.csv`, `.xlsx`, `.geojson`, `.html`).
+Los resultados quedan en la carpeta `outputs/` (`salida_sii.csv`, `.xlsx`, `.geojson`, `.html`).
+
+> 📁 En [`outputs/`](outputs/) se incluyen **salidas de ejemplo** (`ejemplo_sii.*`) generadas
+> a partir de [`plantilla_entrada.csv`](plantilla_entrada.csv), para ver los cuatro formatos
+> sin necesidad de ejecutar la herramienta. Las corridas reales (`salida_sii.*`) quedan
+> excluidas del repositorio por `.gitignore`.
 
 ### Consulta individual
 
@@ -78,7 +83,7 @@ python sii_roles.py --list-comunas rancagua
 | Opción | Descripción |
 |---|---|
 | `-o NOMBRE` | Nombre base de las salidas (por defecto `salida_sii`). |
-| `--outdir CARPETA` | Carpeta de salida (por defecto `SALIDAS`). |
+| `--outdir CARPETA` | Carpeta de salida (por defecto `outputs`). |
 | `--no-csv` / `--no-xlsx` / `--no-geojson` / `--no-html` | Omitir un formato. |
 | `--delay 0.5` | Pausa en segundos entre consultas. |
 | `--reintentos 3` | Reintentos ante errores de red. |
