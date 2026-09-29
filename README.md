@@ -1,5 +1,7 @@
 # Consulta de roles de avalúo del SII
 
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![CLI](https://img.shields.io/badge/CLI-4D4D4D?style=flat-square&logo=gnubash&logoColor=white) ![GeoJSON](https://img.shields.io/badge/GeoJSON-3A7BD5?style=flat-square)
+
 Herramienta de línea de comandos, en un solo archivo Python, para consultar de forma
 **masiva** información de predios en la [Cartografía Digital del SII (Mapas SII)](https://www4.sii.cl/mapasui/internet/)
 a partir de **comuna + manzana + predio** (el rol de avalúo).
